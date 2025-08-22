@@ -1,0 +1,215 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Меню ресторана</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      transition: background 0.3s, color 0.3s;
+    }
+    :root {
+      --bg: #ffffff;
+      --text: #000000;
+      --card-front: #f0f0f0;
+      --card-back: #d0d0d0;
+    }
+    .dark {
+      --bg: #121212;
+      --text: #ffffff;
+      --card-front: #1e1e1e;
+      --card-back: #333333;
+    }
+    header {
+      background: #b22222;
+      color: white;
+      padding: 1em;
+      text-align: center;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 10px;
+    }
+    nav button {
+      padding: 10px 15px;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+      background: #ffcc00;
+      font-weight: bold;
+    }
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin: 20px;
+    }
+    .card {
+      width: 220px;
+      height: 160px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+    }
+    .card-front {
+      background: var(--card-front);
+    }
+    .card-back {
+      background: var(--card-back);
+      transform: rotateY(180deg);
+      font-size: 14px;
+    }
+    #themeToggle {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      padding: 10px;
+      border-radius: 50%;
+      border: none;
+      background: #ffcc00;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🍴 Меню ресторана</h1>
+  </header>
+  <button id="themeToggle">🌙</button>
+  <nav>
+    <button onclick="showSection('osnovnoe')">🥘 Основное меню</button>
+    <button onclick="showSection('lisichki')">🍄 Лисички</button>
+    <button onclick="showSection('obed')">🍲 Обеды</button>
+    <button onclick="showSection('zavtrak')">🍳 Завтраки</button>
+    <button onclick="showSection('deti')">👶 Детское меню</button>
+    <button onclick="showSection('napitki')">🥤 Напитки</button>
+  </nav>
+
+  <!-- Основное меню -->
+  <section id="osnovnoe" class="cards"></section>
+
+  <!-- Лисички -->
+  <section id="lisichki" class="cards" style="display:none;"></section>
+
+  <!-- Обеды -->
+  <section id="obed" class="cards" style="display:none;"></section>
+
+  <!-- Завтраки -->
+  <section id="zavtrak" class="cards" style="display:none;"></section>
+
+  <!-- Детское меню -->
+  <section id="deti" class="cards" style="display:none;"></section>
+
+  <!-- Напитки -->
+  <section id="napitki" class="cards" style="display:none;"></section>
+
+  <script>
+    const menu = {
+      osnovnoe: [
+        {name:"Шашлык из курицы 🔥", ingredients:"Курица, специи, лук, зелень"},
+        {name:"Шашлык из свинины 🥩", ingredients:"Свинина, специи, маринад, лук"},
+        {name:"Оджахури 🍖", ingredients:"Свинина, картофель, лук, специи"},
+        {name:"Хинкали 🥟", ingredients:"Тесто, мясо, зелень, специи"},
+        {name:"Хачапури по-аджарски 🧀", ingredients:"Тесто, сыр, яйцо, масло"}
+      ],
+      lisichki: [
+        {name:"Салат с лисичками 🥗", ingredients:"Шпинат, сметана, лисички, лук, укроп, томаты, картофель"},
+        {name:"Шоти с лисичками 🍞", ingredients:"Шоти, сыр творожный, лисички, яйцо пашот"},
+        {name:"Суп с лисичками 🍲", ingredients:"Грибной бульон, картофель, лисички, морковь, лук"},
+        {name:"Крем-суп с лисичками 🥣", ingredients:"Лисички, куриный бульон, сливки, курица, сыр"},
+        {name:"Хинкали с лисичками 🥟", ingredients:"Тесто, лисички, масло, чеснок, зелень"}
+      ],
+      obed: [
+        {name:"Салат из двух видов капусты 🥬", ingredients:"Капуста, морковь, соус ореховый"},
+        {name:"Салат мимоза 🐟", ingredients:"Консервы рыбы, картофель, морковь, сыр, яйцо"},
+        {name:"Борщ 🍲", ingredients:"Свекла, капуста, мясо, морковь, лук"},
+        {name:"Рассольник 🥒", ingredients:"Мясо, рассол, картофель, перловка"},
+        {name:"Харчо 🌶", ingredients:"Мясо, рис, аджика, томаты, специи"}
+      ],
+      zavtrak: [
+        {name:"Овсяная каша 🥣", ingredients:"Овсянка, молоко или вода, ягоды, мюсли"},
+        {name:"Рисовая каша 🍚", ingredients:"Рис, молоко или вода, ягоды, мюсли"},
+        {name:"Вафли с лососем 🧇", ingredients:"Кабачковые вафли, лосось, авокадо, яйцо пашот"},
+        {name:"Омлет классический 🍳", ingredients:"Яйцо, молоко, сливки, салат, томаты"},
+        {name:"Шакшука 🍅", ingredients:"Яйца, перец, томаты, фасоль, специи"}
+      ],
+      deti: [
+        {name:"Куриные наггетсы 🍗", ingredients:"Курица, панировка, масло"},
+        {name:"Мини-пицца 🍕", ingredients:"Тесто, сыр, томаты, колбаса"},
+        {name:"Детский супчик 🍲", ingredients:"Куриный бульон, овощи"},
+        {name:"Котлетки с пюре 🍖", ingredients:"Курица, картофельное пюре"},
+        {name:"Сырники со сметаной 🍮", ingredients:"Творог, яйцо, мука, сметана"}
+      ],
+      napitki: [
+        {name:"Лимонад 🍋", ingredients:"Сок лимона, сахар, вода, лёд"},
+        {name:"Компот 🍎", ingredients:"Сухофрукты, сахар, вода"},
+        {name:"Морс клюквенный 🍒", ingredients:"Клюква, сахар, вода"},
+        {name:"Чай Ассам ☕", ingredients:"Чай чёрный"},
+        {name:"Сангрия 🍷", ingredients:"Вино, сок, фрукты"}
+      ]
+    };
+
+    function renderMenu(sectionId) {
+      const section = document.getElementById(sectionId);
+      section.innerHTML = "";
+      menu[sectionId].forEach(item => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="card-inner">
+            <div class="card-front"><b>${item.name}</b></div>
+            <div class="card-back">${item.ingredients}</div>
+          </div>`;
+        card.addEventListener("click", () => card.classList.toggle("flipped"));
+        section.appendChild(card);
+      });
+    }
+
+    function showSection(sectionId) {
+      document.querySelectorAll("section").forEach(sec => sec.style.display="none");
+      document.getElementById(sectionId).style.display="flex";
+    }
+
+    // Первая загрузка
+    Object.keys(menu).forEach(renderMenu);
+    showSection("osnovnoe");
+
+    // Тёмная/светлая тема
+    const toggleBtn = document.getElementById("themeToggle");
+    toggleBtn.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      toggleBtn.textContent = document.body.classList.contains("dark") ? "🌞" : "🌙";
+    });
+  </script>
+</body>
+</html>
